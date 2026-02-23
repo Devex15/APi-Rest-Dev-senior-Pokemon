@@ -4,7 +4,7 @@
   "description": "API Rest développée grâce à la formation API rest dev senior",
   "main": "app.js",
   "scripts": {
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "keywords": [
     "API",
@@ -14,5 +14,8 @@
     "Formation"
   ],
   "author": "The magnificent myself on his electronic machine ( hihihihihi)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
