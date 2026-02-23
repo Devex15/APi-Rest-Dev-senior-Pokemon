@@ -1,0 +1,18 @@
+{
+  "name": "dev_api_pokemon_senior_dev",
+  "version": "1.0.0",
+  "description": "API Rest développée grâce à la formation API rest dev senior",
+  "main": "app.js",
+  "scripts": {
+    "start" : "node app.js"
+  },
+  "keywords": [
+    "API",
+    "Rest",
+    "Tutoriel",
+    "exercice",
+    "Formation"
+  ],
+  "author": "The magnificent myself on his electronic machine ( hihihihihi)",
+  "license": "ISC"
+}
