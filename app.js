@@ -22,7 +22,7 @@ Elle prend deux arguments req et res ( req permet de récupérer l'objet request
 On utilise la méthode send de response afin de renvoyer la réponse au client. 
 ====================================================================================
  */
-app.get("/", (req,res) => res.send(`Hello , express! yayyyy !`))
+app.get("/", (req,res) => res.send(`Hello , express ! yayyyy !`))
 
 //On lance l'écoute sur le port que l'on a définit (ie => 3000) et on confirme qu'il fonctionne 
 app.listen(port, () => {
