@@ -7,24 +7,34 @@ app.get("/", (req,res) => res.send(`Hello , express ! yayyyy !`))
 
 /*
 ==========================================================================
-On pourrait définir différents end points , un en point correspoindant à un pokémon 
-sous la forme : app.get(`/api/pokemons/1` , (req,res) => res.send(`Vous avrez demandé le pokémon n°1`)) 
+On recherche un pokémon en fonction de son id :
+On va donc chercher grâce à la méthode .params et avec req.params.id , l'id du pokémon
+demandé par l'utilisateur .
 
-Afin de faciliter les choses on va utiliser la commande req.paramms.id :
-Grâce à cette commande on récupère l'id du pokémon qui nous intéresse, dans la requête client
-On va utiliser cet id dans la réponse .
+Le problème est que l'id est une chaine de caractère , on a la transformer en nombre grâce
+à la propriété parseInt()
 =====================================================================================
 
-On va utiliser la syntaxe des : (:id) : express va récupérer l'id du pokémon puis la transmettre dans le point de terminaison
-via l'objet req 
-On peut donc récuorér cette id à la transmettre à la réoponse client.
+La méthode finc() va chercher puis comparer l'id du pokémon demandé avec les id des pokémons du  tableau
 */
 
 
 app.get(`/api/pokemons/:id`, (req,res) => {
-    const id = req.params.id
-    res.send(`Vous avez demandé le pokémon n° :${id}`)
+    const id = parseInt(req.params.id)
+
+    const pokemon = pokemons.find(pokemon => pokemon.id === id)
+
+    if (!pokemon) {
+        return res.status(404).json({
+        message : "Le pokémon demandé n'a pas été trouvé. " })
+    }
+
+    //Avec if () ne pas oublier le return 
+    res.status(200).json(pokemon)
 })
+
+app.get(`/`, res.send(`Il y a ${pokemons.length} dans le pokédex.`))
+
 app.listen(port, () => {
     console.log(`Notre application Node est démarré !
     http://localhost:${port}`);
