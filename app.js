@@ -1,7 +1,7 @@
 const express = require ('express');
 // On charge le tableau du fichier mock-pokemon.js 
 
-const helper = require('./helper.js')
+const {success} = require('./helper.js')
 // On fait appel au module helper.js 
 const pokemons = require('./mock-pokemon.js');
 const app = express();
@@ -9,13 +9,6 @@ const app = express();
 const port = 3000;
 
 app.get("/", (req,res) => res.send(`Hello , express ! yayyyy !`))
-
-/* On modifie l'app.js afin d'ajouter un message sur l'entête de la réponse :
-res.status(200).json(helper.success(message,pokemon))
-
-La fonction call back fait appel à deux paramètres car ce sont les deux valeurs sur lesquelles 
-on attend une réponse
-*/
 
 app.get(`/api/pokemons/:id`, (req,res) => {
     const id = parseInt(req.params.id)
@@ -29,8 +22,15 @@ app.get(`/api/pokemons/:id`, (req,res) => {
     
     const message = "Un pokémon a bien été trouvé."
     // On ajoute dans la réponse la fonction fonction helper.success() en call back de res.json()
-    res.status(200).json(helper.success(message,pokemon))
+    res.status(200).json.success(message,pokemon)
 })
+
+/* Onn simplifie  const helper = require(`./helper.js`) en const {sucess} = require(`./helper.js`) . 
+Grâce à L'ECMA6 (ES6) on utilise les accolades qu'on appelle affectation déstructurée afin de faire appel 
+à la fonction success définie dans le helper.js 
+
+On va simplifier ainsi le res.status(200).json(helper.success(message, pokemon)) en 
+res.status(200).succes(message,pokemon) */
 
 //nouveau endpoint qui va permettre de retourner le nombre d'éléments du tableau 
 app.get(`/api/pokemons/`, (req,res)=>{
@@ -42,3 +42,5 @@ app.listen(port, () => {
     console.log(`Notre application Node est démarré !
     http://localhost:${port}`);
 })
+
+// On juge une API Rest à la qualité et fiabilité de ses réponses . 
