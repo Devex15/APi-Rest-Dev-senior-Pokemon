@@ -1,28 +1,20 @@
 const express = require ('express');
-// On charge le tableau du fichier mock-pokemon.js 
-
-const {success} = require('./helper.js')
-// Affectation destructurée {succes} : On fait appel à une fonction particulière de helper
-// Cela allègera le code lorsqu'on l'utilisera . *
-
+const {success} = require('./helper.js');
+const morgan = require (`morgan`);
 const pokemons = require('./mock-pokemon.js');
-const app = express();
 
+const app = express();
 const port = 3000;
 
 /*
-On définit un middleware appelé logger qui va logger les réquêtes entrantes de l'API Rest:
-Il affichera les requêtes entrantes de l'API sur le terminal de l'API Rest( de VS code).
-Le paramètre next est indispensable : Il permettra d'utiliser la méthode next() fournis 
-par express() signalant que l'utilisation du middleware est terminée . 
-*/
-const logger = (req,res,next) => {
-    console.log(`URL : ${req.url}`)
-    next()
-}
+On installe morgan qui est un mdodule node.js , un middlware qui va afficher les requêtes 
+entrantes des utilisateurs de l'API Rest  avec const morgan = require(`morgan`)
 
-app.use(logger)
-// La méthode use() permet d'utiliser le middleware directement sur le entry point . 
+On lutilise ensuite avec la méthode use()
+*/
+
+app.use(morgan(`dev`))
+// On fait passer comme paramètres `dev`car on l'utilise en phase de développemet. 
 
 app.get("/", (req,res) => res.send(`Hello , express ! yayyyy !`))
 
