@@ -1,18 +1,28 @@
 const express = require ('express');
 const {success} = require('./helper.js');
 const morgan = require (`morgan`);
+const favicon = require (`serve-favicon`);
 const pokemons = require('./mock-pokemon.js');
 
 const app = express();
 const port = 3000;
 
 /*
-On installe morgan qui est un mdodule node.js , un middlware qui va afficher les requêtes 
-entrantes des utilisateurs de l'API Rest  avec const morgan = require(`morgan`)
+Comment conncanténer des middlewares ?
+Les middlewares vont recevoir la requête , la traiter et passer la requête au middlware suivant:
+Il est important quand on crée des middlewares de passer les arguments (req,res, next):
+next() est indispensable sinon le traitement s'arrêtera au middleware ( qui n'a pas de next())
 
-On lutilise ensuite avec la méthode use()
+Morgan et serve-favicon sont des middlewares qui ont le next() intégrés.
+L'intérêt et la puissance des middlewares est que ont peut les mettre les uns à la suite des 
+autres et créer de véritables chaines de traitement.
+Afin de concaténer les middlewares , il suffit juste de les mettre les uns à la suite des autres
+avec app.use() , use signifiant à l'app d'utiliser ce middleware. 
+
+On crée ainsi une chaine de traitement . 
 */
 
+app.use(favicon(__dirname + `/favicon.ico`))
 app.use(morgan(`dev`))
 // On fait passer comme paramètres `dev`car on l'utilise en phase de développemet. 
 
