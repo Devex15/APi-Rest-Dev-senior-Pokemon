@@ -7,21 +7,6 @@ const pokemons = require('./mock-pokemon.js');
 const app = express();
 const port = 3000;
 
-/*
-Comment conncanténer des middlewares ?
-Les middlewares vont recevoir la requête , la traiter et passer la requête au middlware suivant:
-Il est important quand on crée des middlewares de passer les arguments (req,res, next):
-next() est indispensable sinon le traitement s'arrêtera au middleware ( qui n'a pas de next())
-
-Morgan et serve-favicon sont des middlewares qui ont le next() intégrés.
-L'intérêt et la puissance des middlewares est que ont peut les mettre les uns à la suite des 
-autres et créer de véritables chaines de traitement.
-Afin de concaténer les middlewares , il suffit juste de les mettre les uns à la suite des autres
-avec app.use() , use signifiant à l'app d'utiliser ce middleware. 
-
-On crée ainsi une chaine de traitement . 
-*/
-
 app.use(favicon(__dirname + `/favicon.ico`))
 app.use(morgan(`dev`))
 // On fait passer comme paramètres `dev`car on l'utilise en phase de développemet. 
@@ -45,6 +30,36 @@ app.get(`/api/pokemons/:id`, (req,res) => {
 app.get(`/api/pokemons/`, (req,res)=> {
     const message = "La liste des  pokémons est la suivante :"
     res.status(200).json(success(message,pokemons))
+})
+
+/*
+============================================================================================
+On va rajouter un nouveau pokémon ( un objet pokémon) à la liste des pokémons du tableau 
+mock-pokemon.js :
+On utilise alors la méthode POST   (   app.pos()   ):
+Le end point ( Le premier paramètre)  sera /api/pokemons car on le crée sur la base de 
+données pokémons .
+
+Le deuxième paramètre (req,res => { } traitant de la requête et réponse ) :
+On crée un id "dur". Dans le principe , il faudrait const id = pokemons.length + 1  
+const pokemonCreated =   On crée un pokemon en récupérant les informations contenant dans le corps 
+de la requête ( req.body ) . On recopie toutes les propriétés du req.body grâce au spread 
+operator ...   C'est ... qui permet de récupérer les informations du req.body 
+On ajoute à ces infos l'id ainsi qu'une date de création .
+
+pokemons.push() : on push , c'est à dire qu'on ajoute le pokemon nouvellement crée ( le 
+nouvel objet) au tableau pokemons 
+On crée une constante ( const = message ) afin de signaler que le pkemon a bien été pushé . 
+
+)
+*/
+
+app.post(`/api/pokemons`, (req,res) => {
+    const id = 124
+    const pokemonCreated = {...req.body, ...{id:id, created: newDate()}}
+    pokemons.push(pokemonCreated)
+    const message = `Le pokemon ${pokemonCreated.name} a bien été créé.`
+    res.status(200).json(message,pokemonCreated)
 })
 
 
