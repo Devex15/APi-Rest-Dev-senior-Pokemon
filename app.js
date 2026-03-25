@@ -1,15 +1,26 @@
 const express = require ('express');
-const {success} = require('./helper.js');
+const {success, getUniqueId} = require('./helper.js');
 const morgan = require (`morgan`);
 const favicon = require (`serve-favicon`);
+const bodyParser = require (`body-parser`)
 const pokemons = require('./mock-pokemon.js');
 
 const app = express();
 const port = 3000;
 
+/*Lorsque l'on fait une requête POST sur l'API , le problème est qu l'on envoie un string
+(une chaine de caractères) , or nous souhaitons du JSON .
+On va donc installer un middleware natif (body-parser) en utilisant la commande 
+npm install body-parser --save . Ce middleware va "parser" au final convertir le string en JSON.
+
+*/
+
 app.use(favicon(__dirname + `/favicon.ico`))
 app.use(morgan(`dev`))
-// On fait passer comme paramètres `dev`car on l'utilise en phase de développemet. 
+
+/* On importe le middleware (body-parser) avec const bodyParser = requier(`body-parser`).
+On va l'utiliser avec la commande .use() en avant de nos routes  */
+app.use(bodyParser.json())
 
 app.get("/", (req,res) => res.send(`Hello , express ! yayyyy !`))
 
@@ -55,11 +66,15 @@ On crée une constante ( const = message ) afin de signaler que le pkemon a bien
 */
 
 app.post(`/api/pokemons`, (req,res) => {
-    const id = 124
-    const pokemonCreated = {...req.body, ...{id:id, created: newDate()}}
+    const id = getUniqueId(pokemons)
+    const pokemonCreated = {...req.body, ...{id:id, created: new Date()}}
     pokemons.push(pokemonCreated)
     const message = `Le pokemon ${pokemonCreated.name} a bien été créé.`
-    res.status(200).json(message,pokemonCreated)
+    console.log(req.body)
+    res.status(200).json({
+        message: message,
+        data: pokemonCreated
+        })
 })
 
 
