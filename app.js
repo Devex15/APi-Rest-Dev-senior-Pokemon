@@ -3,23 +3,17 @@ const {success, getUniqueId} = require('./helper.js');
 const morgan = require (`morgan`);
 const favicon = require (`serve-favicon`);
 const bodyParser = require (`body-parser`)
-const pokemons = require('./mock-pokemon.js');
+let pokemons = require('./mock-pokemon.js');
 
 const app = express();
 const port = 3000;
 
-/*Lorsque l'on fait une requête POST sur l'API , le problème est qu l'on envoie un string
-(une chaine de caractères) , or nous souhaitons du JSON .
-On va donc installer un middleware natif (body-parser) en utilisant la commande 
-npm install body-parser --save . Ce middleware va "parser" au final convertir le string en JSON.
-
-*/
 
 app.use(favicon(__dirname + `/favicon.ico`))
 app.use(morgan(`dev`))
 
 /* On importe le middleware (body-parser) avec const bodyParser = requier(`body-parser`).
-On va l'utiliser avec la commande .use() en avant de nos routes  */
+On va l'utiliser avec la commande app.use(body-parser) en avant de nos routes  */
 app.use(bodyParser.json())
 
 app.get("/", (req,res) => res.send(`Hello , express ! yayyyy !`))
@@ -43,28 +37,6 @@ app.get(`/api/pokemons/`, (req,res)=> {
     res.status(200).json(success(message,pokemons))
 })
 
-/*
-============================================================================================
-On va rajouter un nouveau pokémon ( un objet pokémon) à la liste des pokémons du tableau 
-mock-pokemon.js :
-On utilise alors la méthode POST   (   app.pos()   ):
-Le end point ( Le premier paramètre)  sera /api/pokemons car on le crée sur la base de 
-données pokémons .
-
-Le deuxième paramètre (req,res => { } traitant de la requête et réponse ) :
-On crée un id "dur". Dans le principe , il faudrait const id = pokemons.length + 1  
-const pokemonCreated =   On crée un pokemon en récupérant les informations contenant dans le corps 
-de la requête ( req.body ) . On recopie toutes les propriétés du req.body grâce au spread 
-operator ...   C'est ... qui permet de récupérer les informations du req.body 
-On ajoute à ces infos l'id ainsi qu'une date de création .
-
-pokemons.push() : on push , c'est à dire qu'on ajoute le pokemon nouvellement crée ( le 
-nouvel objet) au tableau pokemons 
-On crée une constante ( const = message ) afin de signaler que le pkemon a bien été pushé . 
-
-)
-*/
-
 app.post(`/api/pokemons`, (req,res) => {
     const id = getUniqueId(pokemons)
     const pokemonCreated = {...req.body, ...{id:id, created: new Date()}}
@@ -77,6 +49,29 @@ app.post(`/api/pokemons`, (req,res) => {
         })
 })
 
+/*
+La requête PUT va permettre de modifier un élément de l'array de la base de données :
+- Quand on fait  let pokemons = require('./mock-pokemon.js') : On charge le fichier sur 
+la RAM / Le .map() de PUT va modifier uniquement le fichier de la RAM pas le array du fichier
+du projet . 
+
+- Si on utilise une méthode PUT , alors il vaut mieux appeler le array de pokémon avec 
+let pokemons = require('./mock-pokemon.js') car la méthode PUT ne peut pas réassigner une valeur
+d'un élément du array si on utilise un const afin d'appeler l'array pokemon. 
+
+le Body-parser va parser les datas en JSON et de manière strict . Cela veut dire : 
+Pas de , à la fin de l'array ni du dernier élément de l'array . 
+ */
+
+app.put(`/api/pokemons/:id`, (req,res) => {
+    const id = parseInt(req.params.id)
+    const pokemonUpdated = { ...req.body, id: id}
+    pokemons = pokemons.map(pokemon => {
+        return pokemon.id === id? pokemonUpdated : pokemon
+    })
+    const message = `Le pokemon ${pokemonUpdated} a bien été modifié. `
+    res.json(success(message, pokemonUpdated))
+})
 
 app.listen(port, () => {
     console.log(`Notre application Node est démarré !
