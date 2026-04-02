@@ -49,28 +49,22 @@ app.post(`/api/pokemons`, (req,res) => {
         })
 })
 
-/*
-La requête PUT va permettre de modifier un élément de l'array de la base de données :
-- Quand on fait  let pokemons = require('./mock-pokemon.js') : On charge le fichier sur 
-la RAM / Le .map() de PUT va modifier uniquement le fichier de la RAM pas le array du fichier
-du projet . 
-
-- Si on utilise une méthode PUT , alors il vaut mieux appeler le array de pokémon avec 
-let pokemons = require('./mock-pokemon.js') car la méthode PUT ne peut pas réassigner une valeur
-d'un élément du array si on utilise un const afin d'appeler l'array pokemon. 
-
-le Body-parser va parser les datas en JSON et de manière strict . Cela veut dire : 
-Pas de , à la fin de l'array ni du dernier élément de l'array . 
- */
-
 app.put(`/api/pokemons/:id`, (req,res) => {
     const id = parseInt(req.params.id)
     const pokemonUpdated = { ...req.body, id: id}
     pokemons = pokemons.map(pokemon => {
         return pokemon.id === id? pokemonUpdated : pokemon
     })
-    const message = `Le pokemon ${pokemonUpdated} a bien été modifié. `
+    const message = `Le pokemon ${pokemonUpdated.name} a bien été modifié. `
     res.json(success(message, pokemonUpdated))
+})
+
+app.delete(`/api/pokemons/:id`, (req,res) => {
+    const id =  parseInt(req.params.id)
+    const pokemonDeleted = pokemons.find(pokemon => pokemon.id === id)
+    pokemons = pokemons.filter(pokemon => pokemon.id !== id )
+    const message = `le pokemon ${pokemonDeleted.name} a bien été supprimé.`
+    res.json(message,pokemonDeleted)
 })
 
 app.listen(port, () => {
